@@ -42,9 +42,12 @@ function getScriptsAdvanced(collection, endcallback){
     getScriptsAdvanced(collection.slice(1), endcallback);
   };
 
+  var th = this;
   if(this.scriptsLoaded.indexOf(script) == -1){
-    this.scriptsLoaded.push(script);
-    jQuery.getScript(script, callback);
+    jQuery.getScript(script, function(){
+      th.scriptsLoaded.push(script);
+      callback();
+    });
   }else{
     callback();
   }
