@@ -18,53 +18,52 @@ function sequentialExecute(collection, endcallback){
   });
 }
 
-function getScripts(collection, endcallback){
-  if(collection.length == 0){
-    return endcallback && endcallback();
+function getGenerator(eachStepCallback){
+  return function(collection, callback){
+    return eachStep(collection, eachStepCallback, callback);
   }
-
-  jQuery.getScript(collection[0], function(){
-     getScripts(collection.slice(1), endcallback);
-  });
 }
 
-function getScriptsAdvanced(collection, endcallback){
-  if(!this.scriptsLoaded){
-    this.scriptsLoaded = [];
-  }
+var cache = [];
 
-  if(collection.length == 0){
-    return endcallback && endcallback();
-  }
+function cachingGetGenerator(eachStepCallback){
+  var temporary = function(collection, endcallback){
+    if(collection.length == 0){
+      return endcallback && endcallback();
+    }
 
-  var script = collection[0];
-  var callback = function(){
-    getScriptsAdvanced(collection.slice(1), endcallback);
-  };
+    var script = collection[0];
+    var func = temporary;
+    var callback = function(){
+      func(collection.slice(1), endcallback);
+    };
 
-  var th = this;
-  if(this.scriptsLoaded.indexOf(script) == -1){
-    jQuery.getScript(script, function(){
-      th.scriptsLoaded.push(script);
+    if(cache.indexOf(script) == -1){
+      eachStepCallback(script, function(){
+        cache.push(script);
+        callback();
+      });
+    }else{
       callback();
-    });
-  }else{
-    callback();
+    }
   }
+
+  return temporary;
 }
 
-function withScripts(){
-  var old$ = window.$;
-  window.$ = jQuery;
-  var scripts = Array.prototype.slice.call(arguments, 0, arguments.length - 1);
-  var endcallback = arguments[arguments.length - 1];
+function withGetGenerator(allStuffCallback){
+  return function withScripts(){
+    var old$ = window.$;
+    window.$ = jQuery;
+    var scripts = Array.prototype.slice.call(arguments, 0, arguments.length - 1);
+    var endcallback = arguments[arguments.length - 1];
 
-  getScriptsAdvanced(scripts, function(){
-    endcallback();
-    window.$ = old$;
-  });
+    allStuffCallback(scripts, function(){
+      endcallback();
+      window.$ = old$;
+    });
+  };
 }
-
 
 var loadImageCache = {}
 function loadImage(imageSrc) {
@@ -91,19 +90,35 @@ function loadImage(imageSrc) {
   return deferred;
 };
 
-function getImages(collection, callback){
-  eachStep(collection, function(src){
-    //console && console.log("Trying to preload image " + src);
-    return loadImage(src);
-  }, function(){
-    console && console.log("Done preloading");
-    callback();
+function appendStyleSheet(css_file){
+  var html_doc = document.getElementsByTagName('head').item(0);
+  var css = document.createElement('link');
+  css.setAttribute('rel', 'stylesheet');
+  css.setAttribute('type', 'text/css');
+  css.setAttribute('href', css_file);
+  html_doc.appendChild(css);
+  return false;
+}
+
+function loadStyleSheet(source, callback){
+  return jQuery.get(source, function(){
+    appendStyleSheet(source);
+    callback && callback();
   });
 }
 
-function getFiles(collection, callback){
-  eachStep(collection, 
-      function(source){
-        return jQuery.get(source);
-      }, callback);
-}
+getScripts = getGenerator(jQuery.getScript);
+getImages = getGenerator(loadImage);
+getFiles = getGenerator(jQuery.get);
+getStyles = getGenerator(loadStyleSheet);
+
+getScriptsNotCached = cachingGetGenerator(jQuery.getScript);
+// TODO: test commented stuff
+//getImagesNotCached = cachingGetGenerator(loadImage);
+//getFilesNotCached = cachingGetGenerator(jQuery.get);
+getStylesNotCached = cachingGetGenerator(loadStyleSheet);
+
+withScripts = withGetGenerator(getScriptsNotCached);
+//withImages = withGetGenerator(getImagesNotCached);
+//withFiles = withGetGenerator(getFilesNotCached);
+withStyles = withGetGenerator(getStylesNotCached);
