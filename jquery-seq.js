@@ -1,3 +1,22 @@
+/** 
+ * @function eachStep
+ * @description Map array collection to deferred callback. Callback executes on every element after previous execution was finished.
+ * @example eachStep(["Hello world", "Goodbye world"], function(hello){
+ *    var def = $.Deferred();
+ *
+ *    setTimeout(function(){
+ *      alert(hello);
+ *      def.resolve();
+ *    }, 1000);
+ *
+ *    return def;
+ * }, function(){alert("Just said good bye");});
+ *
+ * @param {Array} collection A collection of items to map one after another
+ * @param {Function} callback A callback that will be called on every item from collection. Callback should return deferred object.
+ * @param {Function} [endcallback] A callback that will be called after every collection element is mapped.
+ */
+
 function eachStep(collection, callback, endcallback){
   if(collection.length == 0){
     return endcallback && endcallback();
@@ -8,6 +27,34 @@ function eachStep(collection, callback, endcallback){
   });
 }
 
+/**
+ * @function sequentialExecute
+ * @description Executes array of deferred callbacks one after another.
+ * @example sequentialExecute([
+ *   function(){ 
+ *     var def = $.Deferred()
+ *
+ *     setTimeout(function(){
+ *       alert("Hello world");
+ *       def.resolve();
+ *     }, 1000);
+ *
+ *     return def;
+ *   },
+ *   function(){ 
+ *     var def = $.Deferred()
+ *
+ *     setTimeout(function(){
+ *       alert("Goodbye world");
+ *       def.resolve();
+ *     }, 1000);
+ *
+ *     return def;
+ *   }], function(){ alert('All executed'); });
+ *
+ * @param {Array} collection A collection of functions (callbacks) to execute one after another.
+ * @param {Function} [endcallback] A callback that will be called after all callbacks from collection.
+ */
 function sequentialExecute(collection, endcallback){
   if(collection.length == 0){
     return endcallback && endcallback();
@@ -107,18 +154,91 @@ function loadStyleSheet(source, callback){
   });
 }
 
+/**
+ * @function getScripts
+ * @description Loads javascript files one after another.
+ *
+ * @param {Array} collection Collection of scripts to load.
+ * @param {Function} [endcallback] Callback that will be executed after all scripts loaded.
+ */
 getScripts = getGenerator(jQuery.getScript);
+
+/**
+ * @function getImages
+ * @description Preloads images one after another. 
+ *
+ * @param {Array} collection Collection of images to preload.
+ * @param {Function} [endcallback] Callback that will be executed after all images are preloaded.
+ */
 getImages = getGenerator(loadImage);
+
+/**
+ * @function getFiles
+ * @description Loads files one after another.
+ *
+ * @param {Array} collection Collection of images to preload.
+ * @param {Function} [endcallback] Callback that will be executed after all images are preloaded.
+ */
 getFiles = getGenerator(jQuery.get);
+
+/**
+ * @function getStyles
+ * @description Loads stylesheets from urls one after another.
+ *
+ * @param {Array} collection Collection of stylesheets urls to use in document.
+ * @param {Function} [endcallback] Callback that will be executed after stylesheets loaded.
+ */
 getStyles = getGenerator(loadStyleSheet);
 
+/**
+ * @function getScriptsNotCached
+ * @description Does same as {@link getScripts} but doesn't load scripts loaded before with this function.
+ *
+ * @param {Array} collection Collection of scripts to load.
+ * @param {Function} [endcallback] Callback that will be executed after all is loaded.
+ */
 getScriptsNotCached = cachingGetGenerator(jQuery.getScript);
 // TODO: test commented stuff
 //getImagesNotCached = cachingGetGenerator(loadImage);
 //getFilesNotCached = cachingGetGenerator(jQuery.get);
+
+/**
+ * @function getStylesNotCached
+ * @description Does same as {@link getStyles} but doesn't load stylesheets loaded before with this function.
+ *
+ * @param {Array} collection Collection of stylesheets urls to use in document.
+ * @param {Function} [endcallback] Callback that will be executed after stylesheets loaded.
+ */
 getStylesNotCached = cachingGetGenerator(loadStyleSheet);
 
+/**
+ * @function withScripts
+ * @description Tries to load as script every url given as param and after that optionally executes callback given as last parameter.
+ * @example withScripts("/script-1.js", "/script-2.js", function(){
+ *   Script1Function();
+ *   Script2Function();
+ * });
+ *
+ * @param {String} url Url of script
+ * @param {String} url Url of script
+ * @param {String} url ...
+ * @param {Function} [endcallback] Callback that will be executed after all scripts loaded.
+ */
 withScripts = withGetGenerator(getScriptsNotCached);
 //withImages = withGetGenerator(getImagesNotCached);
 //withFiles = withGetGenerator(getFilesNotCached);
+
+/**
+ * @function withStyles
+ * @description Tries to load as stylesheet every url given as param and after that optionally executes callback given as last parameter.
+ * @example withStyles("/style-1.css", "/style-2.css", function(){
+ *   $('#test-1').addClass('class-from-style-1');
+ *   $('#test-2').addClass('class-from-style-2');
+ * });
+ *
+ * @param {String} url Url of stylesheet
+ * @param {String} url Url of stylesheet
+ * @param {String} url ...
+ * @param {Function} [endcallback] Callback that will be executed after all scripts loaded.
+ */
 withStyles = withGetGenerator(getStylesNotCached);
