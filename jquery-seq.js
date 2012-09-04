@@ -174,7 +174,7 @@ getImages = getGenerator(loadImage);
 
 /**
  * @function getFiles
- * @description Loads files one after another.
+ * @description Loads files one after another. Useful for flash files for example.
  *
  * @param {Array} collection Collection of images to preload.
  * @param {Function} [endcallback] Callback that will be executed after all images are preloaded.
@@ -200,7 +200,14 @@ getStyles = getGenerator(loadStyleSheet);
 getScriptsNotCached = cachingGetGenerator(jQuery.getScript);
 // TODO: test commented stuff
 //getImagesNotCached = cachingGetGenerator(loadImage);
-//getFilesNotCached = cachingGetGenerator(jQuery.get);
+/**
+ * @function getFilesNotCached
+ * @description Does same as {@link getFiles} but doesn't load scripts loaded before with this function.
+ *
+ * @param {Array} collection Collection of files to load.
+ * @param {Function} [endcallback] Callback that will be executed after all is loaded.
+ */
+getFilesNotCached = cachingGetGenerator(jQuery.get);
 
 /**
  * @function getStylesNotCached
@@ -214,6 +221,7 @@ getStylesNotCached = cachingGetGenerator(loadStyleSheet);
 /**
  * @function withScripts
  * @description Tries to load as script every url given as param and after that optionally executes callback given as last parameter.
+ * Does not load scripts already loaded with this function or function {@link getScriptsNotCached}
  * @example withScripts("/script-1.js", "/script-2.js", function(){
  *   Script1Function();
  *   Script2Function();
@@ -226,11 +234,26 @@ getStylesNotCached = cachingGetGenerator(loadStyleSheet);
  */
 withScripts = withGetGenerator(getScriptsNotCached);
 //withImages = withGetGenerator(getImagesNotCached);
-//withFiles = withGetGenerator(getFilesNotCached);
+/**
+ * @function withFiles
+ * @description Tries to preload every url given as param and after that optionally executes callback given as last parameter.
+ * Does not load files already loaded with this function or function {@link getFilesNotCached}
+ * @example withFiles("/style-1.css", "/style-2.css", function(){
+ *   $('#test-1').addClass('class-from-style-1');
+ *   $('#test-2').addClass('class-from-style-2');
+ * });
+ *
+ * @param {String} url Url of stylesheet
+ * @param {String} url Url of stylesheet
+ * @param {String} url ...
+ * @param {Function} [endcallback] Callback that will be executed after all scripts loaded.
+ */
+withFiles = withGetGenerator(getFilesNotCached);
 
 /**
  * @function withStyles
  * @description Tries to load as stylesheet every url given as param and after that optionally executes callback given as last parameter.
+ * Does not load stylesheets already loaded with this function or function {@link getStylesNotCached}
  * @example withStyles("/style-1.css", "/style-2.css", function(){
  *   $('#test-1').addClass('class-from-style-1');
  *   $('#test-2').addClass('class-from-style-2');

@@ -254,6 +254,15 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/_global_.html#getFilesNotCached">getFilesNotCached</a></b>(collection, endcallback)
+								</div>
+								<div class="description">Does same as <a href="../symbols/_global_.html#getFiles">getFiles</a> but doesn't load scripts loaded before with this function.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/_global_.html#getImages">getImages</a></b>(collection, endcallback)
 								</div>
 								<div class="description">Preloads images one after another.</div>
@@ -302,6 +311,15 @@ ul.inheritsList
 								<div class="fixedFont"><b><a href="../symbols/_global_.html#sequentialExecute">sequentialExecute</a></b>(collection, endcallback)
 								</div>
 								<div class="description">Executes array of deferred callbacks one after another.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/_global_.html#withFiles">withFiles</a></b>(url, url, url, endcallback)
+								</div>
+								<div class="description">Tries to preload every url given as param and after that optionally executes callback given as last parameter.</div>
 							</td>
 						</tr>
 					
@@ -416,7 +434,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Loads files one after another.
+						Loads files one after another. Useful for flash files for example.
 						
 							<br />
 							<i>Defined in: </i> <a href="../symbols/src/_home_oz_src_jquery-seq_jquery-seq.js.html">jquery-seq.js</a>.
@@ -441,6 +459,51 @@ ul.inheritsList
 									<i>Optional</i>
 								</dt>
 								<dd>Callback that will be executed after all images are preloaded.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="getFilesNotCached"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getFilesNotCached</b>(collection, endcallback)
+					
+					</div>
+					<div class="description">
+						Does same as <a href="../symbols/_global_.html#getFiles">getFiles</a> but doesn't load scripts loaded before with this function.
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/_home_oz_src_jquery-seq_jquery-seq.js.html">jquery-seq.js</a>.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Array}</span> <b>collection</b>
+									
+								</dt>
+								<dd>Collection of files to load.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>endcallback</b>
+									<i>Optional</i>
+								</dt>
+								<dd>Callback that will be executed after all is loaded.</dd>
 							
 							</dl>
 						
@@ -747,6 +810,71 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name="withFiles"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>withFiles</b>(url, url, url, endcallback)
+					
+					</div>
+					<div class="description">
+						Tries to preload every url given as param and after that optionally executes callback given as last parameter.
+Does not load files already loaded with this function or function <a href="../symbols/_global_.html#getFilesNotCached">getFilesNotCached</a>
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/_home_oz_src_jquery-seq_jquery-seq.js.html">jquery-seq.js</a>.
+						
+						
+					</div>
+					
+					
+					
+					<pre class="code">withFiles("/style-1.css", "/style-2.css", function(){
+  $('#test-1').addClass('class-from-style-1');
+  $('#test-2').addClass('class-from-style-2');
+});</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>url</b>
+									
+								</dt>
+								<dd>Url of stylesheet</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>url</b>
+									
+								</dt>
+								<dd>Url of stylesheet</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>url</b>
+									
+								</dt>
+								<dd>...</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>endcallback</b>
+									<i>Optional</i>
+								</dt>
+								<dd>Callback that will be executed after all scripts loaded.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="withScripts"> </a>
 					<div class="fixedFont">
 					
@@ -756,6 +884,7 @@ ul.inheritsList
 					</div>
 					<div class="description">
 						Tries to load as script every url given as param and after that optionally executes callback given as last parameter.
+Does not load scripts already loaded with this function or function <a href="../symbols/_global_.html#getScriptsNotCached">getScriptsNotCached</a>
 						
 							<br />
 							<i>Defined in: </i> <a href="../symbols/src/_home_oz_src_jquery-seq_jquery-seq.js.html">jquery-seq.js</a>.
@@ -820,6 +949,7 @@ ul.inheritsList
 					</div>
 					<div class="description">
 						Tries to load as stylesheet every url given as param and after that optionally executes callback given as last parameter.
+Does not load stylesheets already loaded with this function or function <a href="../symbols/_global_.html#getStylesNotCached">getStylesNotCached</a>
 						
 							<br />
 							<i>Defined in: </i> <a href="../symbols/src/_home_oz_src_jquery-seq_jquery-seq.js.html">jquery-seq.js</a>.
@@ -887,7 +1017,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sun Aug 19 2012 20:01:04 GMT+0300 (EEST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Tue Sep 04 2012 17:28:40 GMT+0300 (EEST)
 		</div>
 	</body>
 </html>
