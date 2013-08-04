@@ -1,3 +1,5 @@
+/* Version 0.0.1 */
+
 /** 
  * @function eachStep
  * @description Map array collection to deferred callback. Callback executes on every element after previous execution was finished.
@@ -106,7 +108,7 @@ function withGetGenerator(allStuffCallback){
     var endcallback = arguments[arguments.length - 1];
 
     allStuffCallback(scripts, function(){
-      endcallback();
+      endcallback && endcallback();
       window.$ = old$;
     });
   };
