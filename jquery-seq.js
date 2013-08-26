@@ -1,4 +1,4 @@
-/* Version 0.0.1 */
+/* Version 0.0.2 */
 
 /** 
  * @function eachStep
@@ -100,18 +100,42 @@ function cachingGetGenerator(eachStepCallback){
   return temporary;
 }
 
+
+var executingDeferred = {};
+
 function withGetGenerator(allStuffCallback){
-  return function withScripts(){
+	var withFunction;
+
+  withFunction = function(){
     var old$ = window.$;
     window.$ = jQuery;
     var scripts = Array.prototype.slice.call(arguments, 0, arguments.length - 1);
     var endcallback = arguments[arguments.length - 1];
 
-    allStuffCallback(scripts, function(){
-      endcallback && endcallback();
-      window.$ = old$;
-    });
+		var functionToBeDone = function(){
+			var defer = jQuery.Deferred();
+
+			allStuffCallback(scripts, function(){
+				endcallback && endcallback();
+				window.$ = old$;
+				defer.resolve();
+
+			  if(executingDeferred[withFunction].state() == 'resolved'){
+					delete executingDeferred[withFunction];
+				}
+			});
+
+			return defer;
+		};
+
+		if(executingDeferred[withFunction]){
+			return executingDeferred[withFunction] = executingDeferred[withFunction].pipe(functionToBeDone);
+		}else{  
+			return executingDeferred[withFunction] = functionToBeDone();
+		}
   };
+
+	return withFunction;
 }
 
 var loadImageCache = {}
