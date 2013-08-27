@@ -1,4 +1,4 @@
-/* Version 0.0.2 */
+/* Version 0.0.3 */
 
 /** 
  * @function eachStep
@@ -120,7 +120,7 @@ function withGetGenerator(allStuffCallback){
 				window.$ = old$;
 				defer.resolve();
 
-			  if(executingDeferred[withFunction].state() == 'resolved'){
+			  if(executingDeferred[withFunction] && executingDeferred[withFunction].state() == 'resolved'){
 					delete executingDeferred[withFunction];
 				}
 			});
